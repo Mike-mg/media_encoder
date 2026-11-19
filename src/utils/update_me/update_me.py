@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-# Update encoder mp4 h265 system
+# Update media_encoder
 
 from pathlib import Path
 
-from .utils_update import (
+from utils_update import (
     add_path_local_bin,
-    check_install_library_colorama,
-    check_venv_created,
+    create_venv,
+    install_library,
     link_into_local_bin,
     sync_media_encoder,
 )
@@ -25,17 +25,17 @@ def install_program() -> None:
     # Launch sync
     sync_media_encoder(source, destination)
 
-    # Link into ~/.local/bin
+    # create link into ~/.local/bin
     link_into_local_bin(destination)
 
-    # add_path_local_bin
+    # Add_path_local_bin
     add_path_local_bin()
 
-    # Check if environment created
-    check_venv_created()
+    # Create environment
+    create_venv()
 
-    # check_install_library_colorama
-    check_install_library_colorama()
+    # Install  library of requirements.txt
+    install_library()
 
 
 if __name__ == "__main__":
