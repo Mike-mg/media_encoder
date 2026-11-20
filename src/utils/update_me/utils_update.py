@@ -31,6 +31,8 @@ def sync_media_encoder() -> None:
             "*.pyc",
             "--exclude",
             ".git",
+            "--exclude",
+            "update_me/",
             str(source),
             str(destination),
         ],
