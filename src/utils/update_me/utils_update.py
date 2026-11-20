@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import subprocess
+import venv
 from pathlib import Path
 
 
@@ -9,6 +10,8 @@ def sync_media_encoder(source: Path, destination: Path) -> None:
         [
             "rsync",
             "-avhP",
+            "--info=progress2",
+            "--human-readable",
             "--delete",
             "--exclude",
             ".venv",
@@ -41,49 +44,20 @@ def add_path_local_bin() -> None:
 def link_into_local_bin(destination: Path) -> None:
     """Check if link media_encoder.py into ~/.local/bin"""
 
-    if not Path(destination / "media_encoder.py").exists():
-        subprocess.run(
-            [
-                "ln",
-                "-sf",
-                f"{destination / 'media_encoder' / 'src' / 'media_encoder.py'}",
-                str(destination),
-            ],
-            check=True,
-        )
+    target: Path = destination / "media_encoder" / "src" / "media_encoder.py"
+    link: Path = destination / "media_encoder.py"
+    link.symlink_to(target)
 
 
-def create_venv() -> None:
+def create_venv(destination: Path) -> None:
     """Create environment"""
-    subprocess.run(
-        [
-            "python3",
-            "-m",
-            "venv",
-            "--clear",
-            str(Path.home() / ".local" / "bin" / "media_encoder" / ".venv"),
-        ],
-        check=True,
-    )
+    venv.create(destination / "media_encoder" / ".venv", clear=True, with_pip=True)
 
 
 def install_library() -> None:
     """Install library of requirements.txt"""
 
-    subprocess.run(
-        [
-            str(
-                Path.home()
-                / ".local"
-                / "bin"
-                / "media_encoder"
-                / ".venv"
-                / "bin"
-                / "pip"
-            ),
-            "install",
-            "-r",
-            Path(Path.home() / ".local" / "bin" / "media_encoder" / "requirements.txt"),
-        ],
-        check=True,
-    )
+    path_me: Path = Path.home() / ".local" / "bin" / "media_encoder"
+    python_venv: Path = path_me / ".venv" / "bin" / "python"
+    requirements_txt: Path = path_me / "requirements.txt"
+    subprocess.run([python_venv, "-m", "pip", "install", "-r", requirements_txt])

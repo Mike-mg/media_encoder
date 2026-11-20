@@ -32,7 +32,7 @@ def install_program() -> None:
     add_path_local_bin()
 
     # Create environment
-    create_venv()
+    create_venv(destination)
 
     # Install  library of requirements.txt
     install_library()
