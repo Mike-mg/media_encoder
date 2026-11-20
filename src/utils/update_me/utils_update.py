@@ -4,12 +4,22 @@ import venv
 from pathlib import Path
 
 
-def sync_media_encoder(source: Path, destination: Path) -> None:
+def create_path() -> None:
+    destination: Path = Path.home() / ".local" / "bin"
+
+    if not destination.exists():
+        destination.mkdir(parents=True, exist_ok=True)
+        destination.chmod(0o755)
+
+
+def sync_media_encoder() -> None:
     """Launch sync"""
+    source: Path = Path.home() / "dev_s" / "python" / "media_encoder"
+    destination: Path = Path.home() / ".local" / "bin"
     subprocess.run(
         [
             "rsync",
-            "-avhP",
+            "-avh",
             "--info=progress2",
             "--human-readable",
             "--delete",
@@ -20,7 +30,7 @@ def sync_media_encoder(source: Path, destination: Path) -> None:
             "--exclude",
             "*.pyc",
             "--exclude",
-            "*.git",
+            ".git",
             str(source),
             str(destination),
         ],
@@ -41,17 +51,20 @@ def add_path_local_bin() -> None:
             file.write(path_local_bin)
 
 
-def link_into_local_bin(destination: Path) -> None:
+def link_into_local_bin() -> None:
     """Check if link media_encoder.py into ~/.local/bin"""
 
-    target: Path = destination / "media_encoder" / "src" / "media_encoder.py"
-    link: Path = destination / "media_encoder.py"
+    target: Path = (
+        Path.home() / ".local" / "bin" / "media_encoder" / "src" / "media_encoder.py"
+    )
+    link: Path = Path.home() / ".local" / "bin" / "media_encoder.py"
     link.symlink_to(target)
 
 
-def create_venv(destination: Path) -> None:
+def create_venv() -> None:
     """Create environment"""
-    venv.create(destination / "media_encoder" / ".venv", clear=True, with_pip=True)
+    path_me: Path = Path.home() / ".local" / "bin" / "media_encoder"
+    venv.create(path_me / ".venv", clear=True, with_pip=True)
 
 
 def install_library() -> None:
