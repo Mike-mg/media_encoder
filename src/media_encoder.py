@@ -25,7 +25,7 @@ class MediaEncoder:
     def check_media(self) -> None:
         """Check all media if ok before encode"""
 
-        print(f"\n{'=' * 100}\n[ 1 | Starting ]  Check medias\n{'=' * 100}\n")
+        print(f"\n{'=' * 100}\n[ 1 | Starting ] Check medias\n{'=' * 100}\n")
 
         list_media: list[Path] = create_list_media()
 
@@ -94,7 +94,7 @@ class MediaEncoder:
         if not list_medias_mkv:
             print(
                 Fore.LIGHTYELLOW_EX,
-                "\n[ X ] .. There are not medias into directory to encode.\n",
+                "[ X ] .. There are not medias into directory to encode.\n",
                 Style.RESET_ALL,
             )
 
