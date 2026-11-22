@@ -2,7 +2,7 @@
 # Update media_encoder
 
 
-from utils_update import (
+from utils_install import (
     add_path_local_bin,
     create_path,
     create_venv,

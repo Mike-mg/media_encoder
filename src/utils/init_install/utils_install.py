@@ -4,6 +4,7 @@ import venv
 from pathlib import Path
 
 
+# 1
 def create_path() -> None:
     destination: Path = Path.home() / ".local" / "bin"
 
@@ -12,6 +13,7 @@ def create_path() -> None:
         destination.chmod(0o755)
 
 
+# 2
 def sync_media_encoder() -> None:
     """Launch sync"""
     source: Path = Path.home() / "dev_s" / "python" / "media_encoder"
@@ -40,6 +42,20 @@ def sync_media_encoder() -> None:
     )
 
 
+# 3
+def link_into_local_bin() -> None:
+    """Check if link media_encoder.py into ~/.local/bin"""
+
+    path_media_encoder: Path = Path.home() / ".local" / "bin" / "media_encoder"
+
+    target: Path = path_media_encoder / "src" / "media_encoder.py"
+
+    link: Path = Path.home() / ".local" / "bin" / "media_encoder.py"
+
+    link.symlink_to(target)
+
+
+# 4
 def add_path_local_bin() -> None:
     """Add variable path : [ ~/.local/bin ]"""
 
@@ -53,22 +69,14 @@ def add_path_local_bin() -> None:
             file.write(path_local_bin)
 
 
-def link_into_local_bin() -> None:
-    """Check if link media_encoder.py into ~/.local/bin"""
-
-    target: Path = (
-        Path.home() / ".local" / "bin" / "media_encoder" / "src" / "media_encoder.py"
-    )
-    link: Path = Path.home() / ".local" / "bin" / "media_encoder.py"
-    link.symlink_to(target)
-
-
+# 5
 def create_venv() -> None:
     """Create environment"""
     path_me: Path = Path.home() / ".local" / "bin" / "media_encoder"
     venv.create(path_me / ".venv", clear=True, with_pip=True)
 
 
+# 6
 def install_library() -> None:
     """Install library of requirements.txt"""
 
