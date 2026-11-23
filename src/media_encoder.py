@@ -20,65 +20,54 @@ class MediaEncoder:
 
     def __init__(self) -> None:
         self.media_encoder: Path = Path.home() / "media_encoder"
+        self.media_final: Path = self.media_encoder / "media_final"
         self.media_error: Path = self.media_encoder / "media_error"
 
     def check_media(self) -> None:
         """Check all media if ok before encode"""
 
+        list_media: list[Path] = create_list_media()
+        color_red: str = f"{Fore.LIGHTRED_EX}"
+        color_green: str = f"{Fore.LIGHTGREEN_EX}"
+        color_white: str = f"{Fore.LIGHTWHITE_EX}"
+        color_cyan: str = f"{Fore.LIGHTCYAN_EX}"
+        color_yellow: str = f"{Fore.LIGHTYELLOW_EX}"
+        reset_color: str = f"{Style.RESET_ALL}"
+
         print(f"\n{'=' * 100}\n[ 1 | Starting ] Check medias\n{'=' * 100}\n")
 
-        list_media: list[Path] = create_list_media()
+        if not list_media:
+            print(
+                color_yellow,
+                "[ X ] .. Not medias into directory to check.\n",
+                reset_color,
+            )
 
-        for index_media, media in enumerate(list_media, start=1):
+        for index, media in enumerate(list_media, start=1):
             log_media_error: Path = self.media_error / f"{media.stem}.log"
 
-            print(
-                Fore.LIGHTCYAN_EX,
-                f"[ {index_media}/{len(list_media)} ]",
-                f" .. {media}",
-                Style.RESET_ALL,
-                flush=True,
-                sep="",
-                end="",
-            )
-            result_command_ffmpeg: subprocess.CompletedProcess[str] = subprocess.run(
-                command_ffmpeg_check_media(str(media)),
-                capture_output=True,
-                errors="replace",
-                encoding="utf-8",
-                check=False,
-            )
+            print(f"{color_cyan}[ {index}/{len(list_media)} ] .. {media}{reset_color}")
+
+            with log_media_error.open("w") as log_file:
+                check_media_command: subprocess.CompletedProcess[str] = subprocess.run(
+                    command_ffmpeg_check_media(str(media)),
+                    text=True,
+                    stderr=log_file,
+                )
+
             if (
-                result_command_ffmpeg.stderr.strip()
-                or result_command_ffmpeg.returncode != 0
+                log_media_error.stat().st_size != 0
+                or check_media_command.returncode != 0
             ):
-                print(Fore.LIGHTYELLOW_EX, " .. [ Media error ]", Style.RESET_ALL)
-                log_media_error.write_text(
-                    result_command_ffmpeg.stderr, encoding="utf-8"
-                )
+                print(color_red, " .. [ Media in Error ]", reset_color)
                 media.replace(self.media_error / media.name)
-                print(
-                    Fore.LIGHTWHITE_EX,
-                    ".. Moving to folder media error executed",
-                    Style.RESET_ALL,
-                )
+                print(color_red, " .. Moving to folder media_error\n", reset_color)
 
             else:
-                print(Fore.LIGHTGREEN_EX, " .. [ Media OK ]", Style.RESET_ALL, end="")
-
-                if (self.media_encoder / "media_final" / media.name).exists():
-                    print(
-                        Fore.LIGHTRED_EX,
-                        ".. Moving impossible file exists to destination",
-                        Style.RESET_ALL,
-                    )
-                else:
-                    media.replace(self.media_encoder / "media_final" / media.name)
-                    print(
-                        Fore.LIGHTWHITE_EX,
-                        ".. Moving to folder media final executed",
-                        Style.RESET_ALL,
-                    )
+                print(color_green, " .. [ Media valided ]", reset_color)
+                media.replace(self.media_encoder / "media_final" / media.name)
+                print(color_white, " .. Moving to folder media_final\n", reset_color)
+                log_media_error.unlink()
 
     def encode_media(self) -> None:
         """Start encode all medias"""

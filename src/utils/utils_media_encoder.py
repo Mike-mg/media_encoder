@@ -111,29 +111,16 @@ def create_list_media() -> list[Path]:
     list_media: list[Path] = []
     path_media: Path = Path.home() / "media_encoder"
 
-    if not any(
+    all_files_media: list[Path] = [
         media
         for media in path_media.glob("*.mkv", case_sensitive=False)
         if media.is_file()
-    ):
-        print(
-            Fore.LIGHTYELLOW_EX,
-            "[ X ] .. There are not medias into directory to check.\n",
-            Style.RESET_ALL,
-            sep="",
-        )
-
-    else:
-        all_files_media: list[Path] = [
-            media
-            for media in path_media.glob("*.mkv", case_sensitive=False)
-            if media.is_file()
-        ]
-        for media in all_files_media:
-            media_lower: Path = media.with_name(media.name.lower())
-            if media != media_lower and not media_lower.exists():
-                media: Path = media.rename(media_lower)
-            list_media.append(media)
+    ]
+    for media in all_files_media:
+        media_lower: Path = media.with_name(media.name.lower())
+        if media != media_lower and not media_lower.exists():
+            media: Path = media.rename(media_lower)
+        list_media.append(media)
 
     return sorted(list_media)
 
