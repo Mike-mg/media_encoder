@@ -52,7 +52,8 @@ def link_into_local_bin() -> None:
 
     link: Path = Path.home() / ".local" / "bin" / "media_encoder.py"
 
-    link.symlink_to(target)
+    if not link.exists():
+        link.symlink_to(target)
 
 
 # 4
