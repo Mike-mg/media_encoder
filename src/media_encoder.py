@@ -6,6 +6,7 @@ from pathlib import Path
 from colorama import Fore, Style
 
 from utils.utils_media_encoder import (
+    check_list,
     clear_screen,
     command_ffmpeg_check_media,
     command_ffmpeg_encode_media,
@@ -26,22 +27,17 @@ class MediaEncoder:
     def check_media(self) -> None:
         """Check all media if ok before encode"""
 
+        type_choice: int = 1
         list_media: list[Path] = create_list_media()
         color_red: str = f"{Fore.LIGHTRED_EX}"
         color_green: str = f"{Fore.LIGHTGREEN_EX}"
         color_white: str = f"{Fore.LIGHTWHITE_EX}"
         color_cyan: str = f"{Fore.LIGHTCYAN_EX}"
-        color_yellow: str = f"{Fore.LIGHTYELLOW_EX}"
         reset_color: str = f"{Style.RESET_ALL}"
 
-        print(f"\n{'=' * 100}\n[ 1 | Starting ] Check medias\n{'=' * 100}\n")
+        print(f"\n{'=' * 100}\n[ {type_choice} | Begin ] Check medias\n{'=' * 100}\n")
 
-        if not list_media:
-            print(
-                color_yellow,
-                "[ X ] .. Not medias into directory to check.\n",
-                reset_color,
-            )
+        check_list(list_media, type_choice)
 
         for index, media in enumerate(list_media, start=1):
             log_media_error: Path = self.media_error / f"{media.stem}.log"
@@ -65,14 +61,15 @@ class MediaEncoder:
 
             else:
                 print(color_green, " .. [ Media valided ]", reset_color)
-                media.replace(self.media_encoder / "media_final" / media.name)
+                media.replace(self.media_final / media.name)
                 print(color_white, " .. Moving to folder media_final\n", reset_color)
                 log_media_error.unlink()
 
     def encode_media(self) -> None:
         """Start encode all medias"""
 
-        print(f"\n{'=' * 100}\n[ 2 | Starting ] Encode medias\n{'=' * 100}\n")
+        type_choice = 2
+        print(f"\n{'=' * 100}\n[ {type_choice} | Begin ] Encode medias\n{'=' * 100}\n")
 
         list_medias_mkv: list[Path] = sorted(
             media
@@ -80,12 +77,7 @@ class MediaEncoder:
             if media.is_file()
         )
 
-        if not list_medias_mkv:
-            print(
-                Fore.LIGHTYELLOW_EX,
-                "[ X ] .. There are not medias into directory to encode.\n",
-                Style.RESET_ALL,
-            )
+        check_list(list_medias_mkv, type_choice)
 
         for index_media, media in enumerate(list_medias_mkv, start=1):
             destination: Path = media.with_name(f"{media.stem}_h265.mp4")
@@ -114,7 +106,7 @@ class MediaEncoder:
             )
 
     def start_media_encoder(self) -> None:
-        """Starting class workflow"""
+        """Starting workflow"""
 
         # Clean screen
         clear_screen()

@@ -67,7 +67,6 @@ def command_ffmpeg_encode_media(media: str, destination: str) -> list[str]:
         "aresample=async=1:first_pts=0",
         "-map_chapters",
         "-1",
-        "-y",
         str(destination),
     ]
 
@@ -158,3 +157,24 @@ def menu_media_encoder(error_message_menu: str = "") -> int | None:
             Style.RESET_ALL,
         )
         sys.exit(1)
+
+
+def check_list(list_media: list[Path], type_choice: int) -> None:
+    """Check if files in fodler"""
+    color_yellow: str = f"{Fore.LIGHTYELLOW_EX}"
+    reset_color: str = f"{Style.RESET_ALL}"
+
+    if not list_media:
+        match type_choice:
+            case 1:
+                print(
+                    color_yellow,
+                    "[ X ] .. Not medias into directory to check.\n",
+                    reset_color,
+                )
+            case 2:
+                print(
+                    color_yellow,
+                    "[ X ] .. Not medias into directory to encode.\n",
+                    reset_color,
+                )
