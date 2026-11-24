@@ -34,7 +34,7 @@ def sync_media_encoder() -> None:
             "--exclude",
             ".git",
             "--exclude",
-            "update_me/",
+            "init_install/",
             str(source),
             str(destination),
         ],
