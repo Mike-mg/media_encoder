@@ -1,4 +1,4 @@
-#!/home/mike/.local/bin/media_encoder/.venv/bin/python
+#!/usr/bin/env -S ${HOME}/.local/bin/media_encoder/.venv/bin/python
 # verif all video and encode
 import subprocess
 from pathlib import Path
